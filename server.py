@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template, url_for, send_file, send_from_directory
 import pandas as pd
 import os
 
@@ -13,7 +13,7 @@ class SuffixException(Exception):
 
 app = Flask(__name__)
 
-def filenameCheck(filename, allowedNames, allowedTypes):
+def filenameCheck(filename, allowedTypes):
     if filename == '' or (filename.split('.')[-1] not in allowedTypes):
         raise SuffixException
 
@@ -26,17 +26,17 @@ def submit():
     if request.method == "POST":
         f = request.files["file"]
 
-        try:
-            filenameCheck(f.filename, allowedNames, allowedTypes)
-        except SuffixException:
-            return redirect(url_for('fail_suffix'))
-        else:   
-            save_path = "./"
-            path = os.path.join(save_path,f.filename)
-            f.save(path)
-            print(f.filename)
-            Jpeg2Excel.main(filename)
-            return redirect(url_for('success'))
+        #try:
+        #    filenameCheck(f.filename, allowedTypes)
+        #except SuffixException:
+        #    return redirect(url_for('fail_suffix'))
+        #else:   
+        save_path = "./"
+        path = os.path.join(save_path,f.filename)
+        f.save(path)
+        print(f.filename)
+        Jpeg2Excel.main(path)
+        return redirect(url_for('success'))
 
     return render_template("submit.html")
 
@@ -52,6 +52,11 @@ def fail():
 def fail_suffix():
     return render_template("fail_suffix.html")
 
+@app.route('/download/<filename>', methods=['Get'])
+def download_file(filename):
+    directory = "/home/ning/OCR/"
+    return send_from_directory(directory, filename, as_attachment=True)
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=433, ssl_context=("./ning.crt", "./ning.key"))
+    app.run(debug=True, host='0.0.0.0', port=666, ssl_context=("./ning.crt", "./ning.key"))

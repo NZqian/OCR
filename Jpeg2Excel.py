@@ -10,12 +10,11 @@ from sys import argv
 def genExcel(infoList, fileName):
     titles = ["序号", "日期", "入厂时间", "出厂时间", "车号", "客户代号",
              "料号", "总重", "空重", "净重"]
-    #dic = dict(zip(titles, infoList))
-    dic = {"col:": titles, "info": infoList}
-    print(dic)
-    df = pd.DataFrame.from_dict(dic)
+    dic = dict(zip(titles, infoList))
+    df = pd.DataFrame(columns=titles)
+    df.append(dic, ignore_index=True)
     print(df)
-    df.to_excel("1.xlsx", index=None, header=False)
+    df.to_excel("1.xlsx", index=None)
 
 def compressImage(imageName):
     img = cv2.imread(imageName, 1)
