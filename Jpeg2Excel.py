@@ -12,7 +12,7 @@ def genExcel(infoList, fileName):
              "料号", "总重", "空重", "净重"]
     dic = dict(zip(titles, infoList))
     df = pd.DataFrame(columns=titles)
-    df.append(dic, ignore_index=True)
+    df = df.append(dic, ignore_index=True)
     print(df)
     df.to_excel("1.xlsx", index=None)
 
