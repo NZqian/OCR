@@ -5,16 +5,22 @@ import cv2
 import os
 import ocr
 import json
+import datetime
 from sys import argv
 
 def genExcel(infoList, fileName):
+    date = datetime.datetime.now().strftime('%Y%m%d')
+    saveFileName = date + ".xlsx"
     titles = ["序号", "日期", "入厂时间", "出厂时间", "车号", "客户代号",
-             "料号", "总重", "空重", "净重"]
+            "料号", "总重", "空重", "净重"]
+    if os.path.exists(saveFileName):
+        df = pd.read_excel(saveFileName)
+    else:
+        df = pd.DataFrame(columns=titles)
     dic = dict(zip(titles, infoList))
-    df = pd.DataFrame(columns=titles)
     df = df.append(dic, ignore_index=True)
     print(df)
-    df.to_excel("1.xlsx", index=None)
+    df.to_excel(saveFileName, index=None)
 
 def compressImage(imageName):
     img = cv2.imread(imageName, 1)
